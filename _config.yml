@@ -9,7 +9,7 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "mint" # The available themes options are "default", "air", "sunrise", "mint", "dirt" and "contrast"
-title                    : "Standardising Medical Images at Scale for AI"
+title                    : #"Standardising Medical Images at Scale for AI"
 title_separator          : "-"
 name                     : &name "Hatim Merchant"
 description              : &description "Medical AI models often struggle when they encounter images from different hospitals or scanners because imaging conditions can vary significantly. Standardizing Medical Images at Scale for AI presents PhyCV, a physics-inspired image standardization method that reduces these differences while preserving important clinical information."   # Update this with a general description of your site, this is the default if not overridden by a page
