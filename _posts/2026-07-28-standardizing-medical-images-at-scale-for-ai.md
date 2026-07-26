@@ -1,0 +1,332 @@
+---
+title: "Standardizing Medical Images at Scale for AI"
+description: "Medical AI models often struggle when they encounter images from different hospitals or scanners because imaging conditions can vary significantly. Standardizing Medical Images at Scale for AI presents PhyCV, a physics-inspired image standardization method that reduces these differences while preserving important clinical information. By improving the consistency of medical images, the approach enables AI models to generalize better across healthcare institutions, leading to more reliable and accurate performance in real-world clinical settings."
+author: "Hatim Merchant"
+date: 2026-07-26 00:00:00 +0000
+categories:
+  - AI
+  - Medical AI
+  - Computer Vision
+tags:
+  - Medical AI
+  - AI
+  - Neural Networks
+layout: single
+toc: true
+toc_sticky: true
+author_profile: true
+read_time: true
+comments: true
+share: true
+related: true
+math: true
+mathjax: true
+---
+
+## **Abstract**
+
+Artificial intelligence (AI) has become an important tool in medical image analysis, helping clinicians diagnose diseases more accurately and efficiently. However, deep learning models often struggle to generalize when applied to medical images collected from different hospitals or institutions. Variations in imaging hardware, staining protocols, and image acquisition methods introduce domain shift, causing models to perform well on one dataset but poorly on unseen data.This paper proposes PhyCV (Physics-Inspired Computer Vision), a physics-based preprocessing framework designed to reduce these variations before images are processed by a deep learning model. Unlike many domain generalization methods that modify the neural network or training process, PhyCV focuses on standardizing the input data using deterministic transformations inspired by optical physics. Specifically, it models medical images as optical fields that undergo virtual diffractive propagation followed by coherent phase detection. These transformations suppress non-semantic variations, such as differences in color and illumination, while preserving diagnostically relevant structures and textures.The authors evaluate PhyCV on the Camelyon17-WILDS histopathology dataset, where it improves out-of-distribution breast cancer classification accuracy from 70.8% to 90.9% under the Empirical Risk Minimization (ERM) baseline. The method also outperforms several existing domain generalization approaches, and competes strongly with state-of-the-art targeted ERM augmentation and ContriMix, while requiring minimal computational overhead.Overall, the paper demonstrates that refining the input data, rather than redesigning the model architecture, can significantly improve the robustness, interpretability, and generalization of medical AI systems across diverse clinical environments.
+
+##  Introduction
+
+The performance of a deep learning model depends heavily on the quality and consistency of the data used during training. In medical imaging, this is particularly challenging because images collected from different hospitals often vary due to differences in scanners, staining procedures, storage conditions, and imaging protocols. Although these variations do not change the underlying diagnosis, they introduce non-semantic differences, commonly referred to as batch effects, which reduce a model's ability to generalize to unseen data.To address this challenge, the authors introduce the concept of a data refinery, drawing an analogy to the refinement of crude oil. Just as crude oil from different sources is refined into a consistent product, medical images can be systematically standardized before they are used for training or inference. Rather than increasing model complexity or relying on large amounts of additional data, the paper proposes a lightweight preprocessing framework that improves data consistency across different domains.PhyCV acts as this data refinery by applying physics-inspired transformations based on principles of optical physics. These transformations remove unwanted variations caused by imaging conditions while preserving clinically meaningful information. Because the preprocessing is deterministic, interpretable, and computationally efficient, it can be integrated into existing deep learning pipelines without modifying the underlying neural network. This approach enables AI models to generalize more effectively across data collected from different healthcare institutions, resulting in more robust, reproducible, and reliable medical image analysis.Existing Methods
+Several approaches have been proposed to address the problem of domain shift in medical imaging. These methods can be broadly categorized into data augmentation and data standardization.
+Data augmentation improves model generalization by generating additional training samples that introduce controlled variations while preserving the underlying diagnostic information. By exposing the model to a wider range of data during training, it becomes more robust when applied to unseen domains. However, this approach increases computational costs and often requires larger or more complex deep learning models to achieve optimal performance.
+In contrast, data standardization is applied as a preprocessing step before model training. Its objective is to reduce non-semantic variations by aligning the data distributions across different datasets. For example, in histopathological imaging, stain color normalization is commonly used to minimize differences in staining protocols between hospitals. Although this approach improves data consistency, existing standardization methods typically rely on extracting specific image features or training dedicated normalization models. As a result, they become computationally expensive and difficult to scale when processing large medical image datasets.
+
+## **PhyCV: The Main Idea**
+
+Physics-Inspired Computer Vision (PhyCV) is a computer vision framework that integrates principles from optical physics into image analysis. Rather than treating an image as only a collection of pixel intensities, PhyCV models it as an optical field and applies transformations inspired by the propagation of light. Previous work has demonstrated that this physics-based approach is effective for several imaging tasks, including phase stretch transform, retinal vessel detection, and MRI super-resolution. Standardizing Medical Images at Scale for AI.pdf
+
+{% include figure
+   image_path="/assets/images/1.png"
+   alt="Domain Shift Problem"
+   width="700"
+   caption="Figure 1: Overview of the data input from various sources introducing domain shift problem because of the variations in data acquistion protocols."
+%}
+
+
+The motivation behind this paper is to use these physics-inspired transformations to address one of the biggest challenges in medical AI: domain shift. Medical images collected at different hospitals often vary in staining, illumination, scanner hardware, and acquisition protocols. These differences are unrelated to the underlying pathology, yet they can significantly reduce the ability of deep learning models to generalize across institutions.
+
+Instead of modifying the neural network or introducing more complex training procedures, PhyCV tackles this problem at the data level. It transforms heterogeneous medical images into a standardized representation that emphasizes diagnostically relevant structures such as tissue boundaries and texture while suppressing non-semantic variations like brightness, staining, and contrast. The goal is to provide the neural network with a more consistent input distribution so that it can learn features that generalize better across hospitals.
+
+Unlike many domain generalization techniques, PhyCV is implemented as a preprocessing step before both training and inference. During training, images from different hospitals are first refined using PhyCV and then used to train the neural network through the standard supervised learning pipeline. During inference, unseen images undergo the same preprocessing before being passed to the trained model. This ensures that both training and testing data are represented in the same standardized domain, reducing the effect of inter-hospital variability. Standardizing Medical Images at Scale for AI.pdf
+
+A key strength of this approach is that it is deterministic and fully differentiable. Unlike data augmentation methods that generate synthetic samples or domain adaptation techniques that require additional optimization, PhyCV always produces the same output for the same input. Because the transformation is derived from optical phase detection and spectral phase processing, the authors describe it as a physics-grounded data standardization framework. The preprocessing introduces only a small computational overhead while remaining easy to integrate into existing deep learning pipelines. 
+
+Ultimately, the paper argues that improving the quality and consistency of the input data can be just as important as improving the neural network itself. Rather than asking the model to learn robustness from increasingly heterogeneous datasets, PhyCV aims to standardize the data before learning begins, allowing the model to focus on medically meaningful structures instead of hospital-specific visual artifacts. [Add figures here]From Optical Physics to Computational Imaging
+
+The idea behind PhyCV originates from photonic time stretch, an optical imaging technique developed to capture extremely fast events that are too rapid for conventional electronic sensors. In optical systems, light propagating through a dispersive medium experiences a frequency-dependent delay: different frequency components travel at slightly different speeds. This naturally redistributes information and makes otherwise inaccessible signals easier to analyze. Standardizing Medical Images at Scale for AI.pdf
+
+Rather than applying this process to light travelling through an optical fibre, PhyCV recreates the same principle computationally. The image is first interpreted as an optical field and transformed into the frequency domain using the Fourier transform. A virtual optical propagation is then simulated by applying a spectral phase kernel, which mimics how light would diffract through a physical optical system. Finally, the transformed image is converted back into the spatial domain, producing a phase-based representation that highlights structural information. Standardizing Medical Images at Scale for AI.pdf
+
+The key idea is that this transformation naturally emphasizes edges, tissue boundaries, and fine textures, while reducing variations caused by illumination, staining, and contrast. Instead of learning these invariances from data, PhyCV introduces them through a deterministic transformation derived from optical physics. This allows images from different hospitals to become more consistent before they are used to train a neural network. Standardizing Medical Images at Scale for AI.pdf
+
+Unlike traditional preprocessing techniques that rely on handcrafted normalization rules or reference images, PhyCV is grounded in physical principles. Every image undergoes the same transformation, making the preprocessing reproducible, computationally efficient, and straightforward to integrate into existing deep learning pipelines. 
+￼
+## Mathematical Formulation
+
+The paper formulates medical image standardization as a transformation problem. 
+The goal is to learn a representation that reduces domain variation while preserving relevant image information.
+
+### Image Representation
+
+An input image can be represented as:
+
+$$
+I(x,y)
+$$
+
+where $I$ represents the intensity value at spatial coordinates $(x,y)$.
+
+### Fourier Transform
+
+The paper uses frequency-domain analysis. The Fourier transform converts an image from the spatial domain into the frequency domain:
+
+$$
+F(u,v)=\sum_x\sum_y I(x,y)e^{-j2\pi(ux/M+vy/N)}
+$$
+
+where:
+
+- $I(x,y)$ is the original image
+- $F(u,v)$ represents the frequency components
+- $(u,v)$ are frequency coordinates
+
+### Laplacian Filtering
+
+The Laplacian operator captures high-frequency information such as edges:
+
+$$
+\nabla^2 I =
+\frac{\partial^2 I}{\partial x^2}
++
+\frac{\partial^2 I}{\partial y^2}
+$$
+
+This helps highlight image structures while reducing unwanted variations.
+
+### Standardization Function
+
+The standardized image can be represented as:
+
+$$
+I_{standardized}=f(I)
+$$
+
+where $f$ represents the physics-inspired transformation applied by PhyCV.
+
+
+## **Mathematical Foundations**
+
+Although PhyCV is inspired by optical physics, its mathematical intuition can be understood without a detailed background in optics. The central idea is that the transformation should emphasize local structural information while reducing the influence of global brightness and staining differences.
+
+After virtually propagating the image through a simulated optical system and extracting the phase information, the authors show that the transformation can be approximated by an equalized Laplacian:
+
+$$
+\varepsilon(x,y) \approx \frac{\nabla^{2}E_i(x,y)}{E_i(x,y)}
+$$
+
+Rather than focusing on the derivation, it is more useful to understand what each part represents.
+
+* E_i(x,y) represents the original input image.
+* \nabla^2 (pronounced Laplacian) is a second-order differential operator that measures how rapidly the image intensity changes. In image processing, it naturally highlights edges, boundaries, and fine textures.
+* Dividing by the original image intensity normalizes the response, making the transformation less sensitive to global brightness, staining, and illumination differences.
+
+As a result, the output no longer depends primarily on how bright or colorful the image is. Instead, it emphasizes tissue morphology, cellular boundaries, and structural patterns, which are much more relevant for diagnosis.
+
+This explains why the authors describe PhyCV as behaving like an equalized Laplacian rather than a conventional edge detector. A standard Laplacian would simply enhance edges, whereas PhyCV additionally normalizes the response, allowing images acquired under different lighting or staining conditions to produce much more consistent feature representations. Standardizing Medical Images at Scale for AI.pdf
+
+⸻
+
+## **Why this matters for machine learning**
+
+The mathematical formulation directly explains why PhyCV improves robustness to domain shift. Instead of forcing the neural network to learn that differences in brightness or staining are irrelevant, PhyCV removes much of this variation before training begins.
+
+Consequently, the neural network receives a standardized representation in which structural tissue features become the dominant source of information. The learning process can therefore focus on clinically meaningful patterns rather than hospital-specific imaging artifacts. 
+
+## **PhyCV in the Deep Learning Pipeline**
+
+A key advantage of PhyCV is that it does not require modifying the neural network architecture or the training objective. Instead, it operates as a preprocessing step that is applied before both training and inference. This makes the method easy to integrate into existing deep learning workflows.
+
+During training, images from different hospitals first pass through the PhyCV transformation. The resulting standardized feature maps are then used as inputs to the neural network. The model is trained using standard supervised learning, where predictions are compared against the ground-truth labels and the parameters are updated through backpropagation.
+
+Applying PhyCV before learning has an important implication. Instead of asking the neural network to learn robustness against staining, illumination, and scanner differences, much of this variability is reduced beforehand. As a result, the model can focus more on diagnostically relevant structures such as tissue morphology and texture.
+
+The same preprocessing is also applied during inference. Any unseen image first undergoes PhyCV transformation before being passed to the trained model. This ensures that both training and testing images are represented in the same standardized domain, reducing the effect of inter-hospital variability and improving out-of-distribution generalization.
+
+Unlike many domain adaptation or augmentation methods, no additional optimization steps, adversarial objectives, or synthetic samples are required. The only change to the pipeline is the insertion of a deterministic preprocessing block before the neural network.[figure]Experimental Setup
+
+A new preprocessing technique is only useful if it improves performance under realistic clinical conditions. To evaluate PhyCV, the authors chose the Camelyon17-WILDS benchmark, a widely used dataset designed to study out-of-distribution (OOD) generalization in histopathology.
+
+Unlike conventional datasets where images are randomly divided into training and testing sets, Camelyon17 separates the data according to the hospital where the images were acquired. This creates a much more realistic evaluation scenario because each hospital uses different scanners, staining protocols, and acquisition settings, resulting in noticeable visual differences between domains.
+
+The dataset consists of 50 whole-slide images collected from five different hospitals, with ten slides contributed by each institution. These slides are divided into approximately 450,000 image patches, each measuring 96 × 96 pixels. Every patch is assigned one of two labels:
+
+* **Tumor**
+* **Normal**
+
+Instead of learning from complete pathology slides, the model is trained on these smaller image patches, making the classification problem a binary image classification task.To evaluate generalization, the hospitals are split into distinct domains: 
+
+[figure]
+This evaluation protocol is considerably more challenging than a random train-test split because the model is never exposed to images from the testing hospital during training. Any improvement therefore reflects genuine robustness to domain shift rather than memorization of the training distribution.Training Configuration
+
+To evaluate whether PhyCV improves medical AI robustness, the authors use a conventional deep learning classification pipeline. The neural network architecture itself is not modified; instead, the only change is the preprocessing applied to the input images.
+
+The classifier used in the experiment is DenseNet-121, a convolutional neural network architecture known for its efficient feature reuse through dense connections. The choice of DenseNet is important because the contribution of this work is not a new model architecture, but a new way of preparing medical images before they are given to an existing model.
+
+### **The training process follows standard supervised learning:**
+
+1. A histopathology patch is first transformed using PhyCV.
+2. The resulting feature map is provided to DenseNet-121.
+3. The network predicts whether the patch contains tumor tissue.
+4. The prediction is compared with the ground-truth label using a classification loss.
+5. The network weights are updated through backpropagation.
+
+The authors train the model using stochastic gradient descent (SGD) with momentum. The training uses a learning rate of 10^{-3}, weight decay (L2 regularization) of 10^{-2}, a batch size of 32, and five training epochs.
+
+For the PhyCV transformation, the authors use the Phase Stretch Transform (PST) implementation from the PhyCV library. The transformation parameters control the behaviour of the simulated optical propagation:
+
+* S controls the strength of the phase transformation.
+* W controls the characteristics of the phase kernel.
+* θLPF controls the low-pass filtering behaviour.
+
+The authors use fixed parameters for all images, meaning that the preprocessing is deterministic. The same input image will always produce the same transformed output.
+
+An important design choice is that the authors do not apply thresholding or morphological operations after the phase transformation. Instead, they keep the output as an analog feature map containing richer structural information. This allows the neural network to learn directly from the continuous representation rather than from a simplified binary image.Compared to traditional approach to train model?A traditional approach would be to provide the original images to the network and rely on the model to learn invariance to hospital-specific differences. However, this creates a difficult learning problem due to scanner differences, staining variations, illumination changes and acquisition artifcats
+Evaluating Robustness to Illumination Variation
+
+Before evaluating PhyCV on large-scale histopathology datasets, the authors first perform a controlled experiment to investigate one of the primary sources of domain shift: illumination variation. Images collected under different lighting conditions often exhibit large differences in brightness and contrast, even when the underlying biological structures remain identical. Such variations can negatively affect the performance of deep learning models by introducing inconsistencies that are unrelated to the actual diagnostic information.
+
+To isolate this effect, the authors take a single microscopic cell image and synthetically generate six progressively more challenging illumination conditions. Each level introduces increasing degradation, ranging from mild brightness variations to severe non-uniform illumination that obscures important visual details.
+
+The purpose of this experiment is not to measure classification accuracy. Instead, it investigates whether the structural information within the image remains stable after applying the PhyCV transformation.
+
+The hypothesis is straightforward:
+
+* If PhyCV successfully suppresses illumination changes while preserving structural features, its output should remain relatively consistent across different lighting conditions.
+* Conversely, if the transformation is sensitive to illumination, the extracted representation should deteriorate as the lighting becomes more challenging.
+
+This experiment provides a controlled environment where illumination is the only changing factor. Consequently, any improvement can be directly attributed to the preprocessing itself rather than to differences in the training procedure or dataset.
+
+⸻
+
+## **Measuring Information Preservation**
+
+To quantify how well structural information is preserved, the authors compare the transformed images produced under different illumination levels. Instead of visually inspecting each image, they compute a similarity metric that measures how closely the processed outputs resemble the original reference image.
+
+A higher similarity score indicates that the preprocessing has successfully preserved the important structural information despite changes in illumination. Conversely, a lower score suggests that the transformation has become increasingly affected by lighting variations.
+
+This experiment therefore serves as an important validation of the underlying physics-inspired preprocessing. Before asking whether PhyCV improves classification performance, the authors first demonstrate that it produces a more stable image representation under varying acquisition conditions.[figure]Histopathology Evaluation: Does PhyCV Improve Generalization?
+
+The illumination experiment demonstrated that PhyCV can produce stable feature representations under changing lighting conditions. The next question is whether this robustness translates into improved performance on a real-world medical imaging task.
+
+To answer this, the authors evaluate their approach on the Camelyon17-WILDS benchmark using the hospital-based split introduced earlier. Unlike the controlled illumination experiment, this evaluation includes multiple sources of domain shift simultaneously, including staining differences, scanner variations, and acquisition protocols.
+
+Before discussing classification accuracy, it is useful to understand what PhyCV actually produces.
+
+The figure below compares original histopathology patches from different hospitals with their corresponding PhyCV representations. Although the transformed images no longer resemble conventional histology slides, they preserve the tissue morphology and cellular structures that are most relevant for diagnosis. At the same time, many of the hospital-specific colour and illumination differences become substantially less pronounced.
+
+This visual consistency suggests that PhyCV successfully standardizes the input data before it reaches the neural network.
+
+(Insert Figure: Original patches vs PhyCV outputs)
+
+⸻
+
+## **Experimental Results**
+
+The main objective of the paper is to determine whether this standardized representation improves out-of-distribution performance.
+
+The baseline model, trained using standard empirical risk minimization (ERM), achieves an OOD test accuracy of 70.8%. After introducing PhyCV as a preprocessing step, the OOD accuracy increases to 90.9%, representing an improvement of more than 20 percentage points.
+
+This result is particularly significant because the neural network architecture remains unchanged. The improvement comes entirely from transforming the input images before training and inference.
+
+**Table 1.** Performance comparison of different methods on out-of-distribution (OOD) validation and test datasets. Values are reported as mean (standard deviation) over multiple runs.
+
+| **Method** | **OOD Validation** | **OOD Test** |
+|:-----------|-------------------:|-------------:|
+| ERM (baseline) | 85.8 (1.9) | 70.8 (7.2) |
+| PAIR | 84.3 (1.6) | 74.0 (7.2) |
+| Fish | 83.9 (1.2) | 74.7 (7.1) |
+| LISA | 81.8 (1.2) | 77.1 (6.9) |
+| ERM + target augmentation | 92.7 (0.7) | 92.1 (3.1) |
+| ContriMix | 91.9 (0.7) | **94.6 (1.2)** |
+| **PST (ours)** | **90.3 (0.8)** | **90.9 (2.4)** |
+
+
+
+The paper also compares PhyCV against several domain generalization techniques, including LISA, ERM with Target Augmentation, and ContriMix.
+
+Among these methods, ContriMix achieves the highest reported accuracy (94.6%). However, unlike PhyCV, these approaches require additional data augmentation strategies or modifications to the training procedure.
+
+PhyCV therefore occupies an interesting position in the comparison. It does not achieve the absolute best performance, but it delivers competitive results while remaining remarkably simple to integrate into existing pipelines.
+
+⸻
+
+## **Why does PhyCV work?**
+
+The improvements reported in the paper suggest that a significant portion of the domain shift problem originates from inconsistencies in the input data rather than limitations of the classifier itself.
+
+Traditional deep learning models must simultaneously learn:
+
+* diagnostic tissue features,
+* staining invariance,
+* illumination invariance,
+* scanner invariance.
+
+PhyCV removes much of this unnecessary variability before training begins. Consequently, the network can devote more of its capacity to learning medically meaningful structures instead of compensating for hospital-specific artifacts.
+
+Rather than making the classifier more complicated, the authors simplify the learning problem itself.
+
+⸻
+
+## **Strengths and Limitations**
+
+One of the most appealing aspects of PhyCV is its simplicity. Since it operates purely as a preprocessing step, it can be integrated into virtually any existing computer vision pipeline without modifying the network architecture or training objective. This also makes the method computationally lightweight and straightforward to reproduce.
+
+Another strength is its deterministic behaviour. Unlike stochastic augmentation techniques, PhyCV always produces the same output for a given image, improving reproducibility—a particularly important property in clinical applications.
+
+The method is also physically interpretable. Because the transformation is derived from optical physics rather than learned through optimisation, it provides a transparent explanation for why structural information is enhanced while illumination and colour variations are suppressed.
+
+Despite these advantages, several limitations remain.
+
+First, the experiments focus almost exclusively on histopathology images. Whether the same preprocessing strategy generalises equally well to MRI, CT, ultrasound, or other imaging modalities remains an open research question.
+
+Second, the quality of the transformation depends on manually selected parameters. Although the authors use fixed values throughout the experiments, different datasets may require retuning.
+
+Finally, although PhyCV substantially outperforms the ERM baseline, it does not achieve the highest accuracy reported in the comparison. Data augmentation methods such as ContriMix still obtain slightly better OOD performance, indicating that preprocessing alone may not completely solve domain shift.
+
+⸻
+
+## **Future Directions**
+
+This work opens several interesting research directions.
+
+One promising avenue is extending PhyCV beyond histopathology to other medical imaging modalities, including MRI, CT, ultrasound, and endoscopy. Each modality exhibits its own sources of acquisition variability, making it valuable to investigate whether physics-inspired preprocessing can provide similar improvements.
+
+Another direction is to combine PhyCV with modern domain generalization techniques. Since preprocessing and data augmentation address different aspects of domain shift, integrating both approaches may further improve robustness.
+
+The preprocessing parameters used in this work are fixed and manually selected. Future research could explore adaptive or learnable parameter selection while preserving the physical interpretability that distinguishes PhyCV from purely data-driven methods.
+
+Finally, evaluating PhyCV on larger multi-center clinical datasets would provide stronger evidence of its effectiveness in real-world deployment scenarios.
+
+⸻
+
+## **Conclusion**
+
+Medical AI has enormous potential to support clinicians, but its success depends on reliable performance across different hospitals and imaging environments. Domain shift remains one of the major barriers preventing widespread clinical deployment.
+
+This paper demonstrates that addressing the problem before learning begins can be remarkably effective. Rather than modifying the neural network, PhyCV standardizes medical images using principles inspired by optical physics, allowing the model to focus on diagnostically relevant tissue structures instead of hospital-specific imaging artifacts.
+
+On the Camelyon17-WILDS benchmark, this simple preprocessing step improves out-of-distribution accuracy from 70.8% to 90.9%, demonstrating that better data representations can significantly improve model robustness.
+
+Although further validation is needed across additional imaging modalities and clinical datasets, PhyCV highlights an important insight: improving the input representation can sometimes be just as impactful as designing a more sophisticated neural network.
+
+## **Key Takeaways**
+
+* Domain shift limits the deployment of medical AI across hospitals.
+* PhyCV addresses this problem through deterministic, physics-inspired preprocessing.
+* The method standardizes images before both training and inference.
+* On Camelyon17-WILDS, PhyCV improves OOD accuracy from 70.8% to 90.9%.
+* The work demonstrates that improving data representations can be as valuable as improving model architectures.
+
