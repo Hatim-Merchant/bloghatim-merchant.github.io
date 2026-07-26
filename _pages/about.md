@@ -7,8 +7,6 @@ redirect_from:
   - /about.html
 ---
 
-# Hatim Merchant
-
 I am an MSc Computer Science student specializing in **Autonomous Systems** at the **University of Stuttgart**.
 
 My research interests lie at the intersection of **Artificial Intelligence, Computer Vision, Deep Learning, and Medical AI**. I am particularly interested in developing robust AI systems that can generalize across real-world environments.
