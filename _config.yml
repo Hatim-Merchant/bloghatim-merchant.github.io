@@ -8,29 +8,29 @@
 
 # Basic Site Settings
 locale                   : "en-US"
-site_theme               : "default" # The available themes options are "default", "air", "sunrise", "mint", "dirt" and "contrast"
-title                    : "Your Name / Site Title"
+site_theme               : "mint" # The available themes options are "default", "air", "sunrise", "mint", "dirt" and "contrast"
+title                    : "Standardising Medical Images at Scale for AI"
 title_separator          : "-"
-name                     : &name "Your Name"
-description              : &description "Your Name's academic portfolio"   # Update this with a general description of your site, this is the default if not overridden by a page
-url                      : https://academicpages.github.io # The base hostname & protocol for your site e.g. "https://[your GitHub username].github.io",
+name                     : &name "Hatim Merchant"
+description              : &description "Medical AI models often struggle when they encounter images from different hospitals or scanners because imaging conditions can vary significantly. Standardizing Medical Images at Scale for AI presents PhyCV, a physics-inspired image standardization method that reduces these differences while preserving important clinical information."   # Update this with a general description of your site, this is the default if not overridden by a page
+url                      : "https://hatim-merchant.github.io/" # The base hostname & protocol for your site e.g. "https://[your GitHub username].github.io",
                                                            # or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"
-baseurl                  : "" # the subpath of your site, e.g. "/blog"
-repository               : "academicpages/academicpages.github.io"
+baseurl                  : "/bloghatim-merchant.github.io" # the subpath of your site, e.g. "/blog"
+repository               : "hatim-merchant/bloghatim-merchant.github.io" # the name of your GitHub repository, e.g. "username/repository"
 
 # Site Author - The following control what appear as part of the author content on the side bar.
 #               If a field is blank the icon and link will not appear, otherwise it will be shown.
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
-  name             : "Your Sidebar Name"
+  avatar           : "bio-photo.png"
+  name             : "Hatim Merchant"
   pronouns         : # example: "she/her"  
-  bio              : "Short biography for the left-hand sidebar"
-  location         : "Earth"
-  employer         : "Red Brick University"
+  bio              : "MSc Computer Science Student at University of Stuttgart"
+  location         : "Stuttgart, Germany"
+  employer         : "University of Stuttgart"
   uri              : # URL
-  email            : "none@example.org" 
+  email            : # Email address
 
   # Academic websites
   academia         : # URL
