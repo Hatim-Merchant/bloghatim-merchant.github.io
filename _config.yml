@@ -23,7 +23,7 @@ repository               : "hatim-merchant/bloghatim-merchant.github.io" # the n
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "/images/bio-photo.jpg"
+  avatar           : "bio-photo.jpg"
   name             : "Hatim Merchant"
   pronouns         : # example: "she/her"  
   bio              : "MSc Computer Science Student at University of Stuttgart"
